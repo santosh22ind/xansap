@@ -4,6 +4,7 @@ import { DM_Serif_Display } from "next/font/google";
 import { Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { SanityLive } from "@/sanity/lib/live";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -40,6 +41,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
           <Navbar />
           {children}
+          <SanityLive />
         </body>
     </html>
   );

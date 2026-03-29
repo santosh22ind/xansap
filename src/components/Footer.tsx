@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { sanityFetch } from "@/sanity/lib/live";
+import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
 
 const services = [
   { label: "SAP FICO", href: "/services/sap-fico" },
@@ -18,7 +20,15 @@ const company = [
   { label: "Contact", href: "/contact" },
 ];
 
-export default function Footer() {
+export default async function Footer() {
+  const { data: settings } = await sanityFetch({ query: SITE_SETTINGS_QUERY });
+
+  const email = settings?.contactEmail ?? "info@xansap.com";
+  const phone = settings?.contactPhone ?? "+44 (0) 123 456 7890";
+  const address = settings?.contactAddress ?? "London, United Kingdom";
+  const linkedinUrl = settings?.linkedinUrl ?? "#";
+  const twitterUrl = settings?.twitterUrl ?? "#";
+
   return (
     <footer className="bg-[#0a1f3f]">
       {/* Main footer */}
@@ -42,7 +52,9 @@ export default function Footer() {
             {/* Social */}
             <div className="flex gap-3">
               <a
-                href="#"
+                href={linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1e6fd4] flex items-center justify-center transition-colors"
                 aria-label="LinkedIn"
               >
@@ -51,7 +63,9 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="#"
+                href={twitterUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1e6fd4] flex items-center justify-center transition-colors"
                 aria-label="Twitter / X"
               >
@@ -60,7 +74,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="mailto:info@xansap.com"
+                href={`mailto:${email}`}
                 className="w-9 h-9 rounded-full bg-white/5 hover:bg-[#1e6fd4] flex items-center justify-center transition-colors"
                 aria-label="Email"
               >
@@ -115,19 +129,19 @@ export default function Footer() {
             <ul className="space-y-4">
               <li className="flex items-start gap-3 text-sm text-blue-200/60">
                 <Mail className="w-4 h-4 text-[#4a9fe8] mt-0.5 shrink-0" />
-                <a href="mailto:info@xansap.com" className="hover:text-white transition-colors">
-                  info@xansap.com
+                <a href={`mailto:${email}`} className="hover:text-white transition-colors">
+                  {email}
                 </a>
               </li>
               <li className="flex items-start gap-3 text-sm text-blue-200/60">
                 <Phone className="w-4 h-4 text-[#4a9fe8] mt-0.5 shrink-0" />
-                <a href="tel:+441234567890" className="hover:text-white transition-colors">
-                  +44 (0) 123 456 7890
+                <a href={`tel:${phone.replace(/\s/g, "")}`} className="hover:text-white transition-colors">
+                  {phone}
                 </a>
               </li>
               <li className="flex items-start gap-3 text-sm text-blue-200/60">
                 <MapPin className="w-4 h-4 text-[#4a9fe8] mt-0.5 shrink-0" />
-                <span>London, United Kingdom</span>
+                <span>{address}</span>
               </li>
             </ul>
           </div>
