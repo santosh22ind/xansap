@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Send, CheckCircle } from "lucide-react";
+import { useRef, useState } from "react";
+import { Send, CheckCircle, Paperclip, X } from "lucide-react";
 
 const modules = [
   "SAP FICO", "SAP CO", "SAP BPC", "SAP MM", "SAP SD", "SAP WM",
@@ -13,6 +13,8 @@ export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [cv, setCv] = useState<File | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     name: "", email: "", company: "", phone: "", module: "", message: "",
     type: "client" as "client" | "consultant",
@@ -22,16 +24,26 @@ export default function ContactForm() {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   }
 
+  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null;
+    if (file && file.size > 5 * 1024 * 1024) {
+      setError("CV file must be under 5 MB.");
+      return;
+    }
+    setError("");
+    setCv(file);
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const fd = new FormData();
+      Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+      if (cv) fd.append("cv", cv);
+
+      const res = await fetch("/api/contact", { method: "POST", body: fd });
       if (!res.ok) throw new Error("Failed");
       setSubmitted(true);
     } catch {
@@ -114,6 +126,30 @@ export default function ContactForm() {
               : "Tell us about your SAP background, the type of opportunity you're looking for, and your availability."}
             className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-[#0f2d5c] placeholder:text-[#b0c0d8] focus:outline-none focus:border-[#1e6fd4] focus:ring-2 focus:ring-[#1e6fd4]/10 transition-colors text-sm resize-none" />
         </div>
+
+        {form.type === "consultant" && (
+          <div>
+            <label className="block text-sm font-medium text-[#0f2d5c] mb-2">
+              Attach CV <span className="text-[#4a6080] font-normal">(PDF or Word, max 5 MB)</span>
+            </label>
+            {cv ? (
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl border border-blue-200 bg-[#f4f8ff] text-sm text-[#0f2d5c]">
+                <Paperclip className="w-4 h-4 text-[#1e6fd4] shrink-0" />
+                <span className="flex-1 truncate">{cv.name}</span>
+                <button type="button" onClick={() => { setCv(null); if (fileRef.current) fileRef.current.value = ""; }}
+                  className="text-[#4a6080] hover:text-red-500 transition-colors">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <label className="flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed border-blue-200 bg-[#f4f8ff] text-sm text-[#4a6080] cursor-pointer hover:border-[#1e6fd4] hover:text-[#1e6fd4] transition-colors">
+                <Paperclip className="w-4 h-4 shrink-0" />
+                <span>Click to upload your CV</span>
+                <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" className="hidden" onChange={handleFile} />
+              </label>
+            )}
+          </div>
+        )}
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button type="submit" disabled={loading} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#1e6fd4] text-white font-medium hover:bg-[#1a5fba] transition-colors shadow-lg shadow-blue-200/40 text-sm disabled:opacity-60">

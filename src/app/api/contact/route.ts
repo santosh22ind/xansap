@@ -1,7 +1,16 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const { name, email, company, phone, module, message, type } = await req.json();
+  const fd = await req.formData();
+
+  const name = fd.get("name") as string;
+  const email = fd.get("email") as string;
+  const company = fd.get("company") as string;
+  const phone = fd.get("phone") as string;
+  const module = fd.get("module") as string;
+  const message = fd.get("message") as string;
+  const type = fd.get("type") as string;
+  const cvFile = fd.get("cv") as File | null;
 
   const subject =
     type === "consultant"
@@ -21,19 +30,36 @@ export async function POST(req: Request) {
     </table>
   `;
 
+  // Build attachments array if CV was uploaded
+  const attachments = [];
+  if (cvFile && cvFile.size > 0) {
+    const buffer = await cvFile.arrayBuffer();
+    const base64 = Buffer.from(buffer).toString("base64");
+    attachments.push({
+      name: cvFile.name,
+      content: base64,
+    });
+  }
+
+  const body: Record<string, unknown> = {
+    sender: { name: "XanSAP Website", email: "santosh22ind@gmail.com" },
+    to: [{ email: process.env.CONTACT_EMAIL_TO }],
+    replyTo: { email, name },
+    subject,
+    htmlContent,
+  };
+
+  if (attachments.length > 0) {
+    body.attachment = attachments;
+  }
+
   const res = await fetch("https://api.brevo.com/v3/smtp/email", {
     method: "POST",
     headers: {
       "api-key": process.env.BREVO_API_KEY!,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      sender: { name: "XanSAP Website", email: "santosh22ind@gmail.com" },
-      to: [{ email: process.env.CONTACT_EMAIL_TO }],
-      replyTo: { email, name },
-      subject,
-      htmlContent,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!res.ok) {
