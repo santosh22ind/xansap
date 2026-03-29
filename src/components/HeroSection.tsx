@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -50,10 +50,10 @@ const slides = [
   },
 ];
 
-const wordVariants = {
+const wordVariants: Variants = {
   initial: { y: 30, opacity: 0 },
-  animate: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
-  exit: { y: -30, opacity: 0, transition: { duration: 0.3, ease: "easeIn" } },
+  animate: { y: 0, opacity: 1, transition: { duration: 0.5, ease: [0.0, 0.0, 0.2, 1] } },
+  exit: { y: -30, opacity: 0, transition: { duration: 0.3, ease: [0.4, 0.0, 1, 1] } },
 };
 
 export default function HeroSection() {
