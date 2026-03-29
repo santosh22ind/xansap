@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { sanityFetch } from "@/sanity/lib/live";
 import { SITE_SETTINGS_QUERY } from "@/sanity/lib/queries";
@@ -37,13 +38,15 @@ export default async function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="inline-block mb-5">
-              <span
-                className="text-2xl font-bold"
-                style={{ fontFamily: "var(--font-dm-serif)" }}
-              >
-                <span className="text-white">Xan</span>
-                <span className="text-[#4a9fe8]">SAP</span>
-              </span>
+              <div className="bg-white rounded-xl px-3 py-2">
+                <Image
+                  src="/logo.jpeg"
+                  alt="XanSAP LLC"
+                  width={120}
+                  height={48}
+                  className="h-10 w-auto object-contain"
+                />
+              </div>
             </Link>
             <p className="text-sm text-blue-200/60 leading-relaxed mb-6">
               Specialist SAP staffing consultants. Connecting enterprises with

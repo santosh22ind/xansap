@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X, ChevronDown } from "lucide-react";
 
 const services = [
@@ -46,14 +47,17 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-18 py-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <span
-              className="text-2xl font-bold tracking-tight"
-              style={{ fontFamily: "var(--font-dm-serif)" }}
-            >
-              <span className="text-[#0f2d5c]">Xan</span>
-              <span className="text-[#1e6fd4]">SAP</span>
-            </span>
+          <Link href="/" className="flex items-center">
+            <div className="bg-white rounded-xl px-2 py-1 shadow-sm">
+              <Image
+                src="/logo.jpeg"
+                alt="XanSAP LLC"
+                width={120}
+                height={48}
+                className="h-10 w-auto object-contain"
+                priority
+              />
+            </div>
           </Link>
 
           {/* Desktop Nav */}
