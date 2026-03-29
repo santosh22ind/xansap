@@ -11,6 +11,8 @@ const modules = [
 
 export default function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [form, setForm] = useState({
     name: "", email: "", company: "", phone: "", module: "", message: "",
     type: "client" as "client" | "consultant",
@@ -20,9 +22,23 @@ export default function ContactForm() {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error("Failed");
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong. Please try again or email us directly.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   if (submitted) {
@@ -99,8 +115,9 @@ export default function ContactForm() {
             className="w-full px-4 py-3 rounded-xl border border-blue-100 bg-white text-[#0f2d5c] placeholder:text-[#b0c0d8] focus:outline-none focus:border-[#1e6fd4] focus:ring-2 focus:ring-[#1e6fd4]/10 transition-colors text-sm resize-none" />
         </div>
 
-        <button type="submit" className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#1e6fd4] text-white font-medium hover:bg-[#1a5fba] transition-colors shadow-lg shadow-blue-200/40 text-sm">
-          Send Message <Send className="w-4 h-4" />
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        <button type="submit" disabled={loading} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#1e6fd4] text-white font-medium hover:bg-[#1a5fba] transition-colors shadow-lg shadow-blue-200/40 text-sm disabled:opacity-60">
+          {loading ? "Sending…" : <><Send className="w-4 h-4" /> Send Message</>}
         </button>
       </form>
     </>
