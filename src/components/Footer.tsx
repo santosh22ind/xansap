@@ -38,15 +38,13 @@ export default async function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="inline-block mb-5">
-              <div className="bg-white rounded-xl px-3 py-2">
-                <Image
-                  src="/logo.jpeg"
-                  alt="XanSAP LLC"
-                  width={160}
-                  height={64}
-                  className="h-14 w-auto object-contain"
-                />
-              </div>
+              <Image
+                src="/logo.jpeg"
+                alt="XanSAP LLC"
+                width={200}
+                height={80}
+                className="h-20 w-auto object-contain"
+              />
             </Link>
             <p className="text-sm text-blue-200/60 leading-relaxed mb-6">
               Specialist SAP staffing consultants. Connecting enterprises with

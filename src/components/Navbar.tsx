@@ -48,16 +48,14 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-18 py-4">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <div className="bg-white rounded-xl px-2 py-1 shadow-sm">
-              <Image
-                src="/logo.jpeg"
-                alt="XanSAP LLC"
-                width={160}
-                height={64}
-                className="h-14 w-auto object-contain"
-                priority
-              />
-            </div>
+            <Image
+              src="/logo.jpeg"
+              alt="XanSAP LLC"
+              width={200}
+              height={80}
+              className="h-16 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Desktop Nav */}
